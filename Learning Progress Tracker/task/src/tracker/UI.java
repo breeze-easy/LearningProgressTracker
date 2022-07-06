@@ -7,7 +7,7 @@ public class UI {
     static final String MSG_NO_INPUT = "No input";
     static final String COMMAND_EXIT = "exit";
 
-    static public void printProgramTitle(){
+    static final public void printProgramTitle(){
         System.out.println(MSG_PROGRAM_TITLE);
     }
 
@@ -17,21 +17,18 @@ public class UI {
 
     public static void printMenuAddStudents() {
         System.out.println("Please enter student credentials or 'back' to return");
+        System.out.print("> ");
     }
 
     public static void println(String s) {
         System.out.println(s);
     }
 
-    public static void printMessageUnknownCommand() {
+    public static void printMessageUknownCommand() {
         System.out.println(MSG_UNKNOWN_COMMAND);
     }
 
     public static void printGoodBye() {
         System.out.println(MSG_GOOD_BUY);
-    }
-
-    public static void print(String s) {
-        System.out.print(s);
     }
 }

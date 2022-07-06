@@ -1,9 +1,12 @@
 package tracker;
 
+import java.util.Scanner;
+
 public class Main {
+    private Session session;
+
     public static void main(String[] args) {
-        // consider injecting Session in UI
-        Session session = new Session(mode.TOPMENU, new Storage());
+        Session session = new Session();
         UI.printProgramTitle();
         session.processUserInput();
         end();

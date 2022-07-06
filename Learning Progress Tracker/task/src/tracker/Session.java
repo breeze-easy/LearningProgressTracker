@@ -5,19 +5,15 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Session {
-    private final List<Student> newStudentsList;
+    private final List<Student> studentList;
     private int studentsCount;
-    private Enum<mode> mode;
-    private Storage storage;
 
-    public Session(Enum<tracker.mode> mode, Storage storage) {
-        this.mode = mode;
-        this.storage = storage;
-        newStudentsList = new ArrayList<>();
+    public Session () {
+        studentList = new ArrayList<>();
     }
 
     public int getStudentCount() {
-        return newStudentsList.size();
+        return studentsCount = studentList.size();
     }
 
     public void processUserInput() {
@@ -29,45 +25,29 @@ public class Session {
                     UI.printNoInput();
                     break;
                 case "back":
-                    if(mode == tracker.mode.TOPMENU) {
-                        UI.println("Enter 'exit' to exit the program");
-                    }else if (mode == tracker.mode.ADDSTUDENTS) {
-                        UI.println("Total " + studentsCount + " students have been added.");
-                    }else UI.printMessageUnknownCommand();
+                    UI.println("Enter 'exit' to exit to program");
                     break;
                 case "add students" :
-                    mode = tracker.mode.ADDSTUDENTS;
+//                    System.out.println("Please enter student credentials or 'back' to return");
                     UI.printMenuAddStudents();
-                    while (true){
-                        System.out.print("> ");
-                        String userInput = getUserInput();
-
-                        if(userInput.trim().equalsIgnoreCase("back")) {
-                            mode = tracker.mode.TOPMENU;
-                            UI.println("Total " + newStudentsList.size() + " students have been added.");
-                            storage.saveStudents(newStudentsList);
-                            newStudentsList.clear();
-                            break;
-                        }else { // add student
-                            Student student =  Verifier.verifyAndCreateNewStudent(userInput);
-                            if (student != null) {
-                                addStudent(student);
-                                UI.println("The student has been added.");
-                            }
-                        }
+                    String userInput = getUserInput();
+                    if(userInput.trim().equalsIgnoreCase("back")) {
+                        UI.println("Total " + studentsCount + " students have been added.");
+                    }else { // must be student info
+                        addStudent(userInput);
                     }
                     break;
                 case "end": case "exit":
                     return; // to end() in main()
                 default:
-                    UI.printMessageUnknownCommand();
+                    UI.printMessageUknownCommand();
             }
         }
     }
 
-    private void addStudent(Student student) {
+    private void addStudent(String studentInfo) {
         try {
-            newStudentsList.add(student);
+            studentList.add(new Student(studentInfo));
         } catch (Exception e) {
             e.printStackTrace();
         }
