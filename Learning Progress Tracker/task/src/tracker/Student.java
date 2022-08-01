@@ -1,42 +1,53 @@
 package tracker;
 
 public class Student {
+    private int studentId;
     private String firstName;
     private String lastName;
     private String email;
 
-    private Student(String firstName, String lastName, String email) {
+    Student(String firstName, String lastName, String email) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
     }
 
-    public Student(String studentInfo) throws Exception {
-        this(studentInfo.split(" ")); // parse string into array
+    public int getStudentId() {
+        return studentId;
     }
 
-    private Student (String [] studentInfo) throws Exception {
-        if(studentInfo.length != 3) throw new Exception("Incomplete Student information");
-        this.firstName = studentInfo[0];
-        this.lastName = studentInfo[1];
-        this.email = studentInfo[2];
+    public void setStudentId(int studentId) {
+        this.studentId = studentId;
     }
 
-    public boolean verifyStudentInfo() throws Exception{
-        verifyFirstName();
-        verifyLastName();
-        verifyEmail();
-        return true;
+    public int[] getTestScores() {
+        return testScores;
     }
 
-    private void verifyLastName() {
-        Verifier.verifyLastName(lastName);
+    private int[] testScores = new int[4];
+
+
+    public void setTestScores(int[] testScores) {
+        this.testScores = testScores;
     }
 
-    private void verifyEmail() {
+    public String getLastName() {
+        return lastName;
     }
 
-    private void verifyFirstName() {
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getEmail() {
+        return email;
+    }
 }
