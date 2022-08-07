@@ -57,7 +57,7 @@ public class DataStore {
             result = true;
         } else {
             result = false;
-            System.out.printf("No student is found for id=%d.\n", studentId);
+//            System.out.printf("No student is found for id=%d.\n", studentId);
         }
         return result;
     }

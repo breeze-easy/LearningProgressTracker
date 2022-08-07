@@ -49,26 +49,30 @@ public class Verifier {
 
     public int[] verifyStudentPointsEntry(String input) {
         String[]parts = input.split(" ");
-        if (parts.length != 5) {
-            System.out.println("Incorrect points format.");
-            return null;
-        }
-        for (String s : parts) {
-            if (!isNumeric(s)) {
-                System.out.println("Incorrect points format.");
-                return null;
+        String strStudentId = parts[0];
+        int[] scores = null;
+        String message = "";
+        try {
+            int studentId = Integer.parseInt(strStudentId);
+            if (dataStore.studentExists(studentId)) {
+                scores = Arrays.stream(input.split(" "))
+                        .mapToInt(Integer::parseInt).toArray();
+            } else if (parts.length != 5) {
+                message = "Incorrect points format.";
+            } else {
+                message = "No student is found for id=" + strStudentId;
             }
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            message = "Student Id must be numeric, but provided:" + strStudentId;
         }
 
-        int[] scores = Arrays.stream(input.split(" ")).mapToInt(Integer::parseInt).toArray();
-        int studentId = scores[0];
-
-        if (dataStore.studentExists(studentId)) {
-            return scores;
-        } else return null;
+        if(!message.isBlank()) {
+            System.out.println(message);
+        }
+        return scores;
 
     }
-
     private boolean isNumeric(String s) {
         boolean result;
         try {

@@ -12,6 +12,7 @@ public class Main {
         System.out.println("Learning Progress Tracker");
 
         while (true) {
+            System.out.print("Please enter command \n> ");
             input = sc.nextLine();
 
             if (input.equals("back")) {
