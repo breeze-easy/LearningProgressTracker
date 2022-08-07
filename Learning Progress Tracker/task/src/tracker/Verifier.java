@@ -1,79 +1,88 @@
 package tracker;
 
-import java.util.regex.Pattern;
+import java.util.Arrays;
 
 public class Verifier {
-    private static String firstName;
-    private static String lastName;
-    private static String email;
+    DataStore dataStore = new DataStore();
 
-     static Student verifyAndCreateNewStudent(String newUserInfo)  {
+    Student verifyStudentEntry(String studentInfo) {
+        boolean result = true;
         Student student = null;
 
-        try {
-            parseUserInfo(newUserInfo);
-        } catch (IllegalArgumentException e) { UI.println(e.getMessage()); return student; }
+        String firstName_regex = "[^'-]\\w*['|-]?\\w*[^'-]";
+        String lastName_regex = "([^'-](\\w*['|-]?\\w*[^'-])+ )+";
+        String email_regex = "[a-z\\d._-]+@[a-z\\d]+\\.[a-z\\d]+";
+        String firstName;
+        String lastName;
+        String email;
 
-        if     (!isValidFirstName())    { UI.println("Incorrect first name"); }
-        else if(!isValidLastName())     { UI.println("Incorrect last name"); }
-        else if(!isValidEmail())        { UI.println("Incorrect email"); }
-        else /* all fields are valid */ { student = new Student(firstName, lastName, email); }
+        String[] fullInfArr = studentInfo.split(" ");
+        if (fullInfArr.length < 3) {
+            System.out.println("Incorrect credentials.");
+            return null;
+        }
+        firstName = fullInfArr[0];
+        email = fullInfArr[fullInfArr.length - 1];
+        if (dataStore.studentAlreadyExists(email)) {
+            System.out.println("This email is already taken.");
+            return null;
+        }
+        lastName = studentInfo.substring(firstName.length() + 1, studentInfo.length() - email.length());
+
+        if (!firstName.matches(firstName_regex)) {
+            System.out.println("Incorrect first name.");
+            result = false;
+        } else if (!lastName.matches(lastName_regex) || !lastName.matches("([\\w|'|-]+\\s?)+")) {
+            System.out.println("Incorrect last name.");
+            result = false;
+        } else if (!email.matches(email_regex)) {
+            result = false;
+            System.out.println("Incorrect email.");
+        }
+
+        if (result) {
+            student  = new Student(firstName, lastName, email);
+        }
 
         return student;
     }
 
-    private static boolean isValidEmail() {
-        String regExPattern = "[a-zA-Z@.]+";
-        return matchesThePattern(regExPattern, email);
-    }
-
-    // get first, last name and email
-    private static void parseUserInfo(String newUserInfo) throws IllegalArgumentException {
-        String[] parts = newUserInfo.split(" ");
-        int numOfTokens = parts.length;
-
-        if(numOfTokens < 3) {
-            throw new IllegalArgumentException("Incorrect credentials");
-        }
-
-        firstName = parts[0];
-        email = parts[numOfTokens -1]; // always last token
-        lastName = extractLastName(parts, numOfTokens);
-
-    }
-
-    private static String extractLastName(String[] parts, int numOfTokens) {
-        // last name could consist of 2 or more tokens
-        String lname = "";
-        if(numOfTokens == 3) {
-            lname = parts[1];
-        }
-        else {
-            for(int i=1; i < numOfTokens - 1; i++) {
-                lname += parts[i] + " ";
+    public int[] verifyStudentPointsEntry(String input) {
+        String[]parts = input.split(" ");
+        String strStudentId = parts[0];
+        int[] scores = null;
+        String message = "";
+        try {
+            int studentId = Integer.parseInt(strStudentId);
+            if (dataStore.studentExists(studentId)) {
+                scores = Arrays.stream(input.split(" "))
+                        .mapToInt(Integer::parseInt).toArray();
+            } else if (parts.length != 5) {
+                message = "Incorrect points format.";
+            } else {
+                message = "No student is found for id=" + strStudentId;
             }
-            lname.trim();
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            message = "Student Id must be numeric, but provided:" + strStudentId;
         }
-        return lname;
-    }
 
-    private static boolean isValidFirstName() {
-        String regExPattern = "[a-zA-Z]+";
-        return !beginsOrEndsWithHyphens(firstName) && matchesThePattern(regExPattern, firstName);
-    }
+        if(!message.isBlank()) {
+            System.out.println(message);
+        }
+        return scores;
 
-    private static boolean isValidLastName() {
-        String regExPattern = "[a-zA-Z ]+"; // may include " "
-        return !beginsOrEndsWithHyphens(lastName) && matchesThePattern(regExPattern, lastName);
     }
-
-    private static boolean matchesThePattern(String regExPattern, String s) {
-        return Pattern.matches(regExPattern, s);
+    private boolean isNumeric(String s) {
+        boolean result;
+        try {
+            int i = Integer.parseInt(s);
+            if (i < 0) result = false;
+            result = true;
+        } catch (NumberFormatException e) {
+            result = false;
+        }
+        return result;
     }
-
-    private static boolean beginsOrEndsWithHyphens(String s) {
-        // hyphen '-' is not allowed as the first or the last chars
-        return (s.charAt(0) == '-') || (s.charAt(s.length()-1) == '-') ;
-    }
-
 }
+

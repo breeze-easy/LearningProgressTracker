@@ -1,16 +1,41 @@
 package tracker;
 
-public class Main {
-    public static void main(String[] args) {
-        // consider injecting Session in UI
-        Session session = new Session(mode.TOPMENU, new Storage());
-        UI.printProgramTitle();
-        session.processUserInput();
-        end();
-    }
+import java.util.Scanner;
 
-    static void end() {
-        UI.printGoodBye();
-        System.exit(0);
+public class Main {
+
+    public static void main(String[] args) {
+
+        Scanner sc = new Scanner(System.in);
+        ActionClass action = new ActionClass();
+        String input;
+        System.out.println("Learning Progress Tracker");
+
+        while (true) {
+            System.out.print("Please enter command \n> ");
+            input = sc.nextLine();
+
+            if (input.equals("back")) {
+                System.out.println("Enter 'exit' to exit the program.");
+            } else if (input.isBlank()) {
+                System.out.println("No input.");
+            } else if (input.equals("add students")) {
+                action.addStudents();
+            } else if (input.equals("list")) {
+                action.listStudents();
+            } else if (input.equals("add points")) {
+                action.addPoints();
+            } else if (input.equals("find")) {
+                action.find();
+            }
+            else if (input.equals("exit")) {
+                System.out.println("Bye!");
+                break;
+            } else {
+                System.out.println("Error: unknown command!");
+            }
+        }
+        sc.close();
     }
 }
+
