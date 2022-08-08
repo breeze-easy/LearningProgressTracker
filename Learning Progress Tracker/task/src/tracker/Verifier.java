@@ -49,40 +49,35 @@ public class Verifier {
 
     public int[] verifyStudentPointsEntry(String input) {
         String[]parts = input.split(" ");
-        String strStudentId = parts[0];
+        int studentId = 0;
         int[] scores = null;
         String message = "";
-        try {
-            int studentId = Integer.parseInt(strStudentId);
-            if (dataStore.studentExists(studentId)) {
-                scores = Arrays.stream(input.split(" "))
-                        .mapToInt(Integer::parseInt).toArray();
-            } else if (parts.length != 5) {
-                message = "Incorrect points format.";
-            } else {
-                message = "No student is found for id=" + strStudentId;
-            }
-        } catch (NumberFormatException e) {
-            e.printStackTrace();
-            message = "Student Id must be numeric, but provided:" + strStudentId;
-        }
 
-        if(!message.isBlank()) {
-            System.out.println(message);
-        }
+        try { studentId = Integer.parseInt(parts[0]); }
+        catch (NumberFormatException numberFormatException) {
+            System.out.println("No student is found for id=" + parts[0]);
+            return null; }
+
+        if (parts.length != 5) {
+            System.out.println("Incorrect points format.");
+            return null; }
+
+        if (dataStore.studentExists(studentId)) {
+            try {
+                scores = Arrays.stream(input.split(" ")).mapToInt(Integer::parseInt).toArray();
+            } catch (Exception e) {
+                System.out.println("Incorrect points format.");
+                return null; }}
+        else { System.out.println("No student is found for id=" + studentId);
+            return null; }
+
+        for (int i = 1; i < scores.length; i++) {
+            if (scores[i] < 0) {
+                System.out.println("Incorrect points format. Points must be positive numbers");
+                return null; }}
+
         return scores;
+    }
 
-    }
-    private boolean isNumeric(String s) {
-        boolean result;
-        try {
-            int i = Integer.parseInt(s);
-            if (i < 0) result = false;
-            result = true;
-        } catch (NumberFormatException e) {
-            result = false;
-        }
-        return result;
-    }
 }
 
