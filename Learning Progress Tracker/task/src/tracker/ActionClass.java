@@ -10,7 +10,7 @@ public class ActionClass {
     Scanner scanner = new Scanner(System.in);
 
     public void addStudents() {
-        System.out.print("Enter student credentials or 'back' to return:\n> ");
+        System.out.println("Enter student credentials or 'back' to return");
         while (true) {
             String input = scanner.nextLine();
 
@@ -39,16 +39,17 @@ public class ActionClass {
         // TODO: "add points" doesn't recognize "back" command after incorrect entry: eg: "asdf 1 2 2 3" -> "back"
         // TODO: fix - "find" should exit loop when "back" is entered
         // TODO: "list" command should print all ids and exit to main menu
-        // TODO: fix - "add points" should not allow negative points
-        System.out.println("Enter an id and points or 'back' to return:\n> ");
+        System.out.print("Enter an id and points or 'back' to return:\n> ");
         while (true) {
             String input = scanner.nextLine();
-            if (input.equals("back")) return;
-            else { // keep adding points
-                int[] scores = verifier.verifyStudentPointsEntry(input); // input should be in int, int, int, int format
-                if (scores != null) {
-                    dataStore.updateStudentScores(scores);
-                }
+
+            if (input.equals("back")) {
+                System.out.println("Enter 'exit' to exit the program.");
+                return; }
+
+            int[] scores = verifier.verifyStudentPointsEntry(input); // input should be in int, int, int, int format
+            if (scores != null) {
+                dataStore.updateStudentScores(scores);
             }
         }
     }
