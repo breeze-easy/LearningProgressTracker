@@ -67,7 +67,10 @@ public class ActionClass {
         System.out.println("Enter an id or 'back' to return:");
         while (true) {
             String input = scanner.nextLine();
-            if (input.equals("back")) break;
+            if (input.equals("back")) {
+                System.out.println("Enter 'exit' to exit the program.");
+                return; }
+
             try {
                 int studentId = Integer.parseInt(input);
                 dataStore.getStudentPoints(studentId);
@@ -75,6 +78,5 @@ public class ActionClass {
                 System.out.println("Incorrect input - please enter a number");
             }
         }
-        return;
     }
 }
