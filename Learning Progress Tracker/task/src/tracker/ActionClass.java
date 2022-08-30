@@ -8,10 +8,12 @@ public class ActionClass {
     Verifier verifier = new Verifier();
     Student student = null;
     Scanner scanner = new Scanner(System.in);
+    Statistics statistics = new Statistics();
 
     public void addStudents() {
         System.out.println("Enter student credentials or 'back' to return");
         while (true) {
+            System.out.print("> ");
             String input = scanner.nextLine();
 
             if (input.equals("back")) {
@@ -22,7 +24,7 @@ public class ActionClass {
                 student = verifier.verifyStudentEntry(input);
                 if (student != null) {
                     student.setStudentId(generateStudentId());
-                    dataStore.addStudent(student);
+                    DataStore.addStudent(student);
                     System.out.println("The student has been added");
                     studentCounter++;
                 }
@@ -36,10 +38,7 @@ public class ActionClass {
     }
 
     public void addPoints() {
-        // TODO: "add points" doesn't recognize "back" command after incorrect entry: eg: "asdf 1 2 2 3" -> "back"
-        // TODO: fix - "find" should exit loop when "back" is entered
-        // TODO: "list" command should print all ids and exit to main menu
-        System.out.print("Enter an id and points or 'back' to return:\n> ");
+        System.out.println("Enter an id and points or 'back' to return:");
         while (true) {
             String input = scanner.nextLine();
 
@@ -49,17 +48,18 @@ public class ActionClass {
 
             int[] scores = verifier.verifyStudentPointsEntry(input); // input should be in int, int, int, int format
             if (scores != null) {
-                dataStore.updateStudentScores(scores);
+                dataStore.addLineOfStudentPoints(scores); // add to the log
+                dataStore.updateStudentPointsTotal(scores); // update student points total
             }
         }
     }
 
     public void listStudents() {
-        dataStore.listStudentIds();
+        dataStore.printStudentIds();
     }
 
     boolean studentAlreadyHasAccount(String email) {
-        dataStore.studentAlreadyExists(email);
+        DataStore.studentAlreadyExists(email);
         return true;
     }
 
@@ -73,10 +73,22 @@ public class ActionClass {
 
             try {
                 int studentId = Integer.parseInt(input);
-                dataStore.getStudentPoints(studentId);
+                if (dataStore.studentExists(studentId)) {
+                    dataStore.printStudentPointsTotal(studentId);
+                }else {
+                    System.out.printf("No student is found for id=%d\n", studentId);
+                    return;
+                }
             } catch (NumberFormatException e) {
                 System.out.println("Incorrect input - please enter a number");
             }
         }
+    }
+
+    /*
+
+     */
+    public void showStatistics() {
+        statistics.runStatistics();
     }
 }

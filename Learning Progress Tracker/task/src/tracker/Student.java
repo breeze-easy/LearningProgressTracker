@@ -5,6 +5,8 @@ public class Student {
     private String firstName;
     private String lastName;
     private String email;
+    private int[] testScores = new int[5]; //keep scores of 4 courses, [indexes]: 0-studentId, 1-Java, 2-DSA, 3-Databases, 4-Spring
+
 
     Student(String firstName, String lastName, String email) {
         this.firstName = firstName;
@@ -23,8 +25,6 @@ public class Student {
     public int[] getTestScores() {
         return testScores;
     }
-
-    private int[] testScores = new int[4];
 
 
     public void setTestScores(int[] testScores) {
