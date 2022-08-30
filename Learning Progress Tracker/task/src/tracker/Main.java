@@ -3,12 +3,13 @@ package tracker;
 import java.util.Scanner;
 
 public class Main {
+    static final String APP_VERSION = ":STAGE 3/5";
 
     public static void main(String[] args) {
 
         Scanner sc = new Scanner(System.in);
         ActionClass action = new ActionClass();
-        System.out.println("Learning Progress Tracker");
+        System.out.println("Learning Progress Tracker" + APP_VERSION);
 
         while (true) {
             String input = sc.nextLine();
