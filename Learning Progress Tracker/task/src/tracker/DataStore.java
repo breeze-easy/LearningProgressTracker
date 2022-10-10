@@ -31,7 +31,6 @@ public class DataStore {
 
     void addLineOfStudentPoints(int[] newPoints) { // // newPoints.length = 5, indexes: 0-student id, 1-4: course points in Java, DSA, Databases, Spring
         studentPointsTransactionLog.add(newPoints);
-        updateStudentPointsTotal(newPoints);
         System.out.println("Points updated.");
     }
 
