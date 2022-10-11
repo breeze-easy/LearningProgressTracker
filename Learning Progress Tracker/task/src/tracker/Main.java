@@ -9,7 +9,7 @@ public class Main {
         Scanner sc = new Scanner(System.in);
         ActionClass action = new ActionClass();
 
-        final String APP_VERSION = "STAGE 4/5";
+        final String APP_VERSION = "STAGE 4/5(Unfinished)";
         System.out.println("Learning Progress Tracker: " + APP_VERSION);
 
         while (true) {
