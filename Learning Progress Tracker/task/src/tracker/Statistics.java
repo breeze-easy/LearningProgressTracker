@@ -4,7 +4,17 @@ import java.util.*;
 
 public class Statistics {
 
-    private static Map<String, Integer> mapNumberOfStudentsPerCourse = new HashMap<>(4);
+    private static Map<String, Integer> mapNumberOfStudentsPerCourse;
+
+    // key: course name
+    // value: int[2] where 1st value is total number of points in submissions for the course
+    //                     2nd value is total number of submissions for this course
+    private static Map<String, int[]> mapSubmissionsPerCourse;
+
+    // key: course name
+    // value: StudentScore object (from inner class)
+    private static Map<String, ArrayList<StudentScore>> mapListOfStudentsPerCourse = new HashMap<>(4);
+
 
     Scanner scanner = new Scanner(System.in);
 
@@ -14,10 +24,21 @@ public class Statistics {
     }
 
     private static void initMapNumberOfStudentsPerCourse() {
+        mapNumberOfStudentsPerCourse = new HashMap<>(4);
+
         mapNumberOfStudentsPerCourse.put("Java", 0);
         mapNumberOfStudentsPerCourse.put("DSA", 0);
         mapNumberOfStudentsPerCourse.put("Databases", 0);
         mapNumberOfStudentsPerCourse.put("Spring", 0);
+    }
+
+    private static void initMapSubmissionsPerCourse() {
+        mapSubmissionsPerCourse = new HashMap<>(4);
+
+        mapSubmissionsPerCourse.put("Java", new int[2]);
+        mapSubmissionsPerCourse.put("DSA", new int[2]);
+        mapSubmissionsPerCourse.put("Databases", new int[2]);
+        mapSubmissionsPerCourse.put("Spring", new int[2]);
     }
 
 
@@ -93,41 +114,57 @@ public class Statistics {
         map.forEach(((key, value) -> System.out.println(key + ":" + value)));
     }
 
-    // get count for students that have points for a specific course
-    Map<String, Integer> getNumberOfStudentsPerCourse() { // returns
+    private static void printMap(Map<Object, Object> map) {
+        map.forEach((key, value) -> System.out.println(key + ":" + value));
+    }
+
+    // get count for students that have points for each course
+    Map<String, Integer> getNumberOfStudentsPerCourse() {
         initMapNumberOfStudentsPerCourse();
-        for (Map.Entry<Integer, int[]> entry: DataStore.getStudentPointsTotal().entrySet()) {
-            for (int i = 1; i < 5; i++) {
+        DataStore.getStudentPointsTotal().forEach((key, value1) -> {
+            for (int i = 1; i < 5; i++) { // indexes of array - 0: studId, 1: Java points, 2: DSA points, 3: Databases
+                                          //                    4: Spring points
                 String courseName = getCourseName(i);
-                int value = entry.getValue()[i];
+                int value = value1[i];
                 if (value > 0) {
                     mapNumberOfStudentsPerCourse.put(courseName, mapNumberOfStudentsPerCourse.get(courseName) + 1);
                 }
             }
-        }
+        });
 //         Collections.sort();
         return mapNumberOfStudentsPerCourse;
     }
 
+    Map<String, Integer> getMapSubmissionsPerCourse() {
+        initMapSubmissionsPerCourse();
+        DataStore.getStudentPointsTransactionLog().stream().map(e -> {
+
+            return null;
+        });
+
+        return null;
+    }
+
     private String getCourseName(int i) {
-        String courseName;
-        switch (i) {
-            case 1:
-                courseName = "Java";
-                break;
-            case 2:
-                courseName = "DSA";
-                break;
-            case 3:
-                courseName = "Databases";
-                break;
-            case 4:
-                courseName = "Spring";
-                break;
-            default:
-                throw new IllegalStateException("Unexpected value: " + i);
-        }
+        String courseName = switch (i) {
+            case 1 -> "Java";
+            case 2 -> "DSA";
+            case 3 -> "Databases";
+            case 4 -> "Spring";
+            default -> throw new IllegalStateException("Unexpected value: " + i);
+        };
         return courseName;
+    }
+
+    private class StudentScore {
+        int studentId;
+        int score;
+        float completion;
+
+
+        public StudentScore(int studentId) {
+            this.studentId = studentId;
+        }
     }
 }
 
