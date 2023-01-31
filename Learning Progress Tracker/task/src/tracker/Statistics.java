@@ -14,9 +14,10 @@ public class Statistics {
     // key: course name
     // value: StudentScore object (from inner class)
     private static Map<String, ArrayList<StudentScore>> mapListOfStudentsPerCourse = new HashMap<>(4);
+    private static Scanner scanner = new Scanner(System.in);
 
 
-    Scanner scanner = new Scanner(System.in);
+//    Scanner scanner = new Scanner(System.in);
 
 
     public Statistics() {
@@ -42,7 +43,7 @@ public class Statistics {
     }
 
 
-    public void runStatistics() {
+    public static void runStatistics() {
         String input;
 
         while (true){
@@ -60,7 +61,8 @@ public class Statistics {
         }
     }
 
-    private boolean showCourseDetailsAndExit(String input) {
+
+      private static boolean showCourseDetailsAndExit(String input) {
         boolean result;
         while (true) {
             if (input.equals("back")) {
@@ -82,7 +84,7 @@ public class Statistics {
         return result;
     }
 
-    private void printListOfStudentPointsAndCompletion(String courseName) {
+    private static void printListOfStudentPointsAndCompletion(String courseName) {
         //print header
         System.out.println(courseName);
         System.out.println("id\t\tpoints\t  completed");
@@ -93,24 +95,24 @@ public class Statistics {
         System.out.print("> ");
     }
 
-    private void showHighestLowestActivity() {
+    private static void showHighestLowestActivity() {
         System.out.println("Highest activity:\t");
         System.out.println("Lowest activity:\t");
     }
 
-    private void showEasiestHardest() {
+    private static void showEasiestHardest() {
         System.out.println("Easiest course:\t");
         System.out.println("Hardest course:\t");
     }
 
-    private void showMostLeastPopular() {
+    private static void showMostLeastPopular() {
         mapNumberOfStudentsPerCourse = getNumberOfStudentsPerCourse();
         System.out.println("Most popular:\t");
         System.out.println("Least popular\t");
         printStringIntegerMap(mapNumberOfStudentsPerCourse);
     }
 
-    private void printStringIntegerMap(Map<String, Integer> map) {
+    private static void printStringIntegerMap(Map<String, Integer> map) {
         map.forEach(((key, value) -> System.out.println(key + ":" + value)));
     }
 
@@ -119,7 +121,7 @@ public class Statistics {
     }
 
     // get count for students that have points for each course
-    Map<String, Integer> getNumberOfStudentsPerCourse() {
+    static Map<String, Integer> getNumberOfStudentsPerCourse() {
         initMapNumberOfStudentsPerCourse();
         DataStore.getStudentPointsTotal().forEach((key, value1) -> {
             for (int i = 1; i < 5; i++) { // indexes of array - 0: studId, 1: Java points, 2: DSA points, 3: Databases
@@ -145,15 +147,14 @@ public class Statistics {
         return null;
     }
 
-    private String getCourseName(int i) {
-        String courseName = switch (i) {
+    private static String getCourseName(int i) {
+        return switch (i) {
             case 1 -> "Java";
             case 2 -> "DSA";
             case 3 -> "Databases";
             case 4 -> "Spring";
             default -> throw new IllegalStateException("Unexpected value: " + i);
         };
-        return courseName;
     }
 
     private class StudentScore {

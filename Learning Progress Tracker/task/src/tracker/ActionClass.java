@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 public class ActionClass {
     private static int studentCounter = 0;
-    DataStore dataStore = new DataStore();
+//    DataStore dataStore = new DataStore();
     Verifier verifier = new Verifier();
     Student student = null;
     Scanner scanner = new Scanner(System.in);
@@ -48,14 +48,14 @@ public class ActionClass {
 
             int[] scores = verifier.verifyStudentPointsEntry(input); // input should be in int, int, int, int format
             if (scores != null) {
-                dataStore.addLineOfStudentPoints(scores); // add to the log
-                dataStore.updateStudentPointsTotal(scores); // update student points total
+                DataStore.addLineOfStudentPoints(scores); // add to the log
+//                DataStore.updateStudentPointsTotal(scores); // update student points total
             }
         }
     }
 
     public void listStudents() {
-        dataStore.printStudentIds();
+        DataStore.printStudentIds();
     }
 
     boolean studentAlreadyHasAccount(String email) {
@@ -73,8 +73,8 @@ public class ActionClass {
 
             try {
                 int studentId = Integer.parseInt(input);
-                if (dataStore.studentExists(studentId)) {
-                    dataStore.printStudentPointsTotal(studentId);
+                if (DataStore.studentExists(studentId)) {
+                    DataStore.printStudentPointsTotal(studentId);
                 }else {
                     System.out.printf("No student is found for id=%d\n", studentId);
                     return;
@@ -89,6 +89,6 @@ public class ActionClass {
 
      */
     public void showStatistics() {
-        statistics.runStatistics();
+        Statistics.runStatistics();
     }
 }
