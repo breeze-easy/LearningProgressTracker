@@ -1,10 +1,12 @@
 package tracker;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Statistics {
 
     private static Map<String, Integer> mapNumberOfStudentsPerCourse;
+    private static Map<String, CourseStatistics> mapCourseStatistics = new HashMap<>(4);
 
     // key: course name
     // value: int[2] where 1st value is total number of points in submissions for the course
@@ -27,26 +29,30 @@ public class Statistics {
     private static void initMapNumberOfStudentsPerCourse() {
         mapNumberOfStudentsPerCourse = new HashMap<>(4);
 
-        mapNumberOfStudentsPerCourse.put("Java", 0);
-        mapNumberOfStudentsPerCourse.put("DSA", 0);
-        mapNumberOfStudentsPerCourse.put("Databases", 0);
-        mapNumberOfStudentsPerCourse.put("Spring", 0);
+        mapNumberOfStudentsPerCourse.put(Course.Java.toString(), 0);
+        mapNumberOfStudentsPerCourse.put(Course.DSA.toString(), 0);
+        mapNumberOfStudentsPerCourse.put(Course.Databases.toString(), 0);
+        mapNumberOfStudentsPerCourse.put(Course.Spring.toString(), 0);
     }
 
     private static void initMapSubmissionsPerCourse() {
         mapSubmissionsPerCourse = new HashMap<>(4);
 
-        mapSubmissionsPerCourse.put("Java", new int[2]);
-        mapSubmissionsPerCourse.put("DSA", new int[2]);
-        mapSubmissionsPerCourse.put("Databases", new int[2]);
-        mapSubmissionsPerCourse.put("Spring", new int[2]);
+        mapSubmissionsPerCourse.put(Course.Java.toString(), new int[2]);
+        mapSubmissionsPerCourse.put(Course.DSA.toString(), new int[2]);
+        mapSubmissionsPerCourse.put(Course.Databases.toString(), new int[2]);
+        mapSubmissionsPerCourse.put(Course.Spring.toString(), new int[2]);
+
+        for (var c : Course.values())
+            mapSubmissionsPerCourse.put(c.name(), new int[2]);
     }
 
 
     public static void runStatistics() {
         String input;
+        mapCourseStatistics = loadStats();
 
-        while (true){
+        while (true) {
             System.out.println("Type the name of a course to see details or 'back' to quit");
             showMostLeastPopular();
             showHighestLowestActivity();
@@ -61,8 +67,20 @@ public class Statistics {
         }
     }
 
+    private static Map<String, CourseStatistics> loadStats() {
+        //TODO: move everything to CourseStatistics class
+        mapCourseStatistics.put("java", new CourseStatistics("java"));
+        mapCourseStatistics.put("dsa", new CourseStatistics("dsa"));
+        mapCourseStatistics.put("databases", new CourseStatistics("databases"));
+        mapCourseStatistics.put("spring", new CourseStatistics("spring"));
 
-      private static boolean showCourseDetailsAndExit(String input) {
+        //loadCourseStats("java")
+
+        return mapCourseStatistics;
+    }
+
+
+    private static boolean showCourseDetailsAndExit(String input) {
         boolean result;
         while (true) {
             if (input.equals("back")) {
@@ -71,7 +89,7 @@ public class Statistics {
                 break;
             }
 
-            String[] values = {"java","dsa","databases","spring"};
+            String[] values = {"java", "dsa", "databases", "spring"};
             boolean contains = Arrays.asList(values).contains(input);
 
             if (contains) {
@@ -125,7 +143,7 @@ public class Statistics {
         initMapNumberOfStudentsPerCourse();
         DataStore.getStudentPointsTotal().forEach((key, value1) -> {
             for (int i = 1; i < 5; i++) { // indexes of array - 0: studId, 1: Java points, 2: DSA points, 3: Databases
-                                          //                    4: Spring points
+                //                    4: Spring points
                 String courseName = getCourseName(i);
                 int value = value1[i];
                 if (value > 0) {
@@ -167,6 +185,28 @@ public class Statistics {
             this.studentId = studentId;
         }
     }
-}
 
+    static int getNumberOfStudentsPerCourse(Course course) {
+        int result = 0;
+        int courseIndexInArray = Course.indexOfCourseInArray(course); //
+
+            for (var entry : DataStore.getStudentPointsTotal().entrySet()) {
+                int[] values = entry.getValue();
+                if (values[courseIndexInArray] > 0) result++;
+            }
+
+//        System.out.println(course + ", Score: " + result);
+        return result;
+    }
+
+    static int getNumberOfSubmissionsPerCourse(Course course){
+        int result = 0;
+        int courseIndexInArray = Course.indexOfCourseInArray(course); //
+
+        for(var values : DataStore.getStudentPointsTransactionLog())
+            if (values[courseIndexInArray] > 0) result++;
+        return result;
+
+    }
+}
 

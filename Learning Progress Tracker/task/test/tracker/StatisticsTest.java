@@ -38,4 +38,33 @@ public class StatisticsTest {
         assertEquals(2, numberOfStudentsPerCourse.get("Databases"));
         assertEquals(1, numberOfStudentsPerCourse.get("Spring"));
     }
+
+    @Test
+    void displayMostPopular2(){
+//        actionClass.addStudents();
+        dataStore.updateStudentPointsTotal(new int[]{1001, 1, 2, 3, 4});
+        dataStore.updateStudentPointsTotal(new int[]{1002, 1, 2, 3, 0});
+        dataStore.updateStudentPointsTotal(new int[]{1003, 1, 2, 0, 0});
+        dataStore.updateStudentPointsTotal(new int[]{1004, 1, 0, 0, 0});
+
+        assertEquals(4, Statistics.getNumberOfStudentsPerCourse(Course.Java));
+        assertEquals(3, Statistics.getNumberOfStudentsPerCourse(Course.DSA));
+        assertEquals(2, Statistics.getNumberOfStudentsPerCourse(Course.Databases));
+        assertEquals(1, Statistics.getNumberOfStudentsPerCourse(Course.Spring));
+    }
+
+
+    @Test
+    void getNumberOfSubmissionsPerCourse() {
+        DataStore.addLineOfStudentPoints(new int[]{1001, 1,2,3,0});
+        DataStore.addLineOfStudentPoints(new int[]{1001, 7,2,3,0});
+        DataStore.addLineOfStudentPoints(new int[]{1002, 1,2,3,4});
+        DataStore.addLineOfStudentPoints(new int[]{1001, 1,2,3,4});
+        DataStore.addLineOfStudentPoints(new int[]{1001, 1,2,3,4});
+
+        assertEquals(5, Statistics.getNumberOfSubmissionsPerCourse(Course.Java));
+        assertEquals(5, Statistics.getNumberOfSubmissionsPerCourse(Course.DSA));
+        assertEquals(5, Statistics.getNumberOfSubmissionsPerCourse(Course.Databases));
+        assertEquals(3, Statistics.getNumberOfSubmissionsPerCourse(Course.Spring));
+    }
 }

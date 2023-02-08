@@ -5,7 +5,16 @@ import java.util.*;
 public class DataStore {
     private static Map<Integer, int[]> studentPointsTotal = new TreeMap<>();
     private static final java.util.Map<Integer,Student> students = new TreeMap<>();
-    private static List<int[]> studentPointsTransactionLog = new ArrayList<>();
+    private static List<int[]> studentPointsTransactionLog; // = new ArrayList<>();
+
+    public DataStore() {
+        studentPointsTransactionLog = new ArrayList<>();
+    }
+
+    public DataStore(List<int[]> studentPointsTransactionLog){
+        this.studentPointsTransactionLog = studentPointsTransactionLog;
+    }
+
     //@@@ private static Map<Integer, int[]> studentPointsTotal = new TreeMap<>();
 
     //@@@    private static void calculateStudentPointsTotal() {
