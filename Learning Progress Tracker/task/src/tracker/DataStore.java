@@ -2,17 +2,19 @@ package tracker;
 
 import java.util.*;
 
-public class DataStore {
-    private static Map<Integer, int[]> studentPointsTotal = new TreeMap<>();
+public class DataStore implements IData{
+    private static Map<Integer, Integer[]> studentPointsTotal = new TreeMap<>();
     private static final java.util.Map<Integer,Student> students = new TreeMap<>();
-    private static List<int[]> studentPointsTransactionLog; // = new ArrayList<>();
+    private static List<Integer[]> studentPointsTransactionLog; // = new ArrayList<>();
 
     public DataStore() {
         studentPointsTransactionLog = new ArrayList<>();
     }
 
-    public DataStore(List<int[]> studentPointsTransactionLog){
-        this.studentPointsTransactionLog = studentPointsTransactionLog;
+    public DataStore(List<Integer[]> studPointsTransactionLog){
+        studentPointsTransactionLog = studPointsTransactionLog;
+        studentPointsTransactionLog.forEach(DataStore::updateStudentPointsTotal);
+
     }
 
     //@@@ private static Map<Integer, int[]> studentPointsTotal = new TreeMap<>();
@@ -35,11 +37,11 @@ public class DataStore {
         return students;
     }
 
-    public static List<int[]> getStudentPointsTransactionLog() {
+    public static List<Integer[]> getStudentPointsTransactionLog() {
         return studentPointsTransactionLog;
     }
 
-    static void addLineOfStudentPoints(int[] newPoints) { // // newPoints.length = 5, indexes: 0-student id, 1-4: course points in Java, DSA, Databases, Spring
+    static void addLineOfStudentPoints(Integer[] newPoints) { // // newPoints.length = 5, indexes: 0-student id, 1-4: course points in Java, DSA, Databases, Spring
         studentPointsTransactionLog.add(newPoints);
         updateStudentPointsTotal(newPoints);
         System.out.println("Points updated.");
@@ -73,22 +75,22 @@ public class DataStore {
     }
 
     public static void printStudentPointsTotal(int studentId) {
-        int[] points = studentPointsTotal.get(studentId);
+        Integer[] points = studentPointsTotal.get(studentId);
 
         if (points == null) {
-            points = new int[5];
+            points = new Integer[5];
             points[0] = studentId;
         }
 
         System.out.printf("%d points: Java=%d; DSA=%d; Databases=%d; Spring=%d\n", studentId, points[1], points[2], points[3], points[4]);
     }
 
-    public static void updateStudentPointsTotal(int[] newPoints) {
+    public static void updateStudentPointsTotal(Integer[] newPoints) {
         int studentId = newPoints[0];
-        int[] studentPoints = studentPointsTotal.get(studentId);
+        Integer[] studentPoints = studentPointsTotal.get(studentId);
 
         if (studentPoints == null) {
-            studentPoints = new int[5];
+            studentPoints = new Integer[]{0,0,0,0,0};
             studentPoints[0] = studentId;
         }
 
@@ -98,7 +100,24 @@ public class DataStore {
         studentPointsTotal.put(studentId, studentPoints);
     }
 
-    public static Map<Integer, int[]> getStudentPointsTotal() {
+    public static Map<Integer, Integer[]> getStudentPointsTotal() {
         return studentPointsTotal;
     }
+
+    @Override
+    public List<Integer[]> loadData(String type) {
+        List<Integer[]> list;
+        switch (type){
+            case "studentPointsTransactionLog" -> list = getStudentPointsTransactionLog();
+            case "studentPointsTotal" -> list = flattenMapToList(getStudentPointsTotal());
+            default -> throw new IllegalArgumentException("Incorrect data log type requested" + type);
+        }
+        return list;
+    }
+
+     List<Integer[]> flattenMapToList(Map<Integer,Integer[]> studentPointsTotal) {
+        List<Integer[]>list = new ArrayList<>();
+        studentPointsTotal.forEach((key, value) -> list.add(value));
+        return list;
+        }
 }

@@ -47,10 +47,11 @@ public class Verifier {
         return student;
     }
 
-    public int[] verifyStudentPointsEntry(String input) {
+    public Integer[] verifyStudentPointsEntry(String input) {
+        Integer[] result;
+        int[] scores;
         String[]parts = input.split(" ");
         int studentId = 0;
-        int[] scores = null;
         String message = "";
 
         try { studentId = Integer.parseInt(parts[0]); }
@@ -65,18 +66,20 @@ public class Verifier {
         if (dataStore.studentExists(studentId)) {
             try {
                 scores = Arrays.stream(input.split(" ")).mapToInt(Integer::parseInt).toArray();
+                result = Arrays.stream(scores).boxed().toArray(Integer[]::new);
+
             } catch (Exception e) {
                 System.out.println("Incorrect points format.");
                 return null; }}
         else { System.out.println("No student is found for id=" + studentId);
             return null; }
 
-        for (int i = 1; i < scores.length; i++) {
-            if (scores[i] < 0) {
+        for (int i = 1; i < result.length; i++) {
+            if (result[i] < 0) {
                 System.out.println("Incorrect points format. Points must be positive numbers");
                 return null; }}
 
-        return scores;
+        return result;
     }
 
 }

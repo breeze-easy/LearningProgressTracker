@@ -7,17 +7,16 @@ public enum Course {
     Course(int i) {pointsToComplete = i;}
 
     // maps course name to corresponding course index in data arrays: transactionLog, etc.
-    static int indexOfCourseInArray(Course course) {
+    public static int indexOfCourseInArray(Course course) {
         return switch (course){
             case Java -> 1;
             case DSA -> 2;
             case Databases -> 3;
             case Spring -> 4;
-            default -> throw new IllegalStateException("Unexpected value: " + course);
         };
     }
 
-    int getPointsToComplete() {return pointsToComplete;}
+    public int getPointsToComplete() {return pointsToComplete;}
 }
 
 class CourseDemo{

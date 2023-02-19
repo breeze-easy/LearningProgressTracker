@@ -44,26 +44,26 @@ public class CourseStatistics {
 
     private int loadSumOfAllSubmissions(int myCourseIndex) { // sum of all submission points for the course
         int sumOfAllSubmissionPoints = 0;
-        List<int[]> studentPointsTransactionLog = DataStore.getStudentPointsTransactionLog();
-        for(int[] arrLine : studentPointsTransactionLog)
+        List<Integer[]> studentPointsTransactionLog = DataStore.getStudentPointsTransactionLog();
+        for(Integer[] arrLine : studentPointsTransactionLog)
             if(arrLine[myCourseIndex] != 0) sumOfAllSubmissionPoints += arrLine[myCourseIndex];
        return sumOfAllSubmissionPoints;
     }
 
     private int loadNumberOfSubmissions(int myCourseIndex) {
         int numberOfSubmissions = 0;
-        List<int[]> studentPointsTransactionLog = DataStore.getStudentPointsTransactionLog();
-        for (int[] arrLine : studentPointsTransactionLog)
+        List<Integer[]> studentPointsTransactionLog = DataStore.getStudentPointsTransactionLog();
+        for (Integer[] arrLine : studentPointsTransactionLog)
             if (arrLine[myCourseIndex] != 0) numberOfSubmissions++;
         return numberOfSubmissions;
     }
 
     int loadNumberOfRegisteredStudents(int myCourseIndex) {
         int numberOfStudents = 0;
-        Map<Integer, int[]> studentsPointTotal = DataStore.getStudentPointsTotal();
+        Map<Integer, Integer[]> studentsPointTotal = DataStore.getStudentPointsTotal();
 
-        for(Map.Entry<Integer, int[]> entry : studentsPointTotal.entrySet()){
-            int[] arrLine = entry.getValue(); // array containing total student scores
+        for(Map.Entry<Integer, Integer[]> entry : studentsPointTotal.entrySet()){
+            Integer[] arrLine = entry.getValue(); // array containing total student scores
             if(arrLine[myCourseIndex] !=0){ numberOfStudents++;}
         }
         return numberOfStudents;
@@ -71,10 +71,10 @@ public class CourseStatistics {
 
     List<int[]> listOfStudentsWithScores(int myCourseIndex) {
         List<int[]> studentScoresList = new ArrayList<>();
-        Map<Integer, int[]> studentsPointTotal = DataStore.getStudentPointsTotal();
+        Map<Integer, Integer[]> studentsPointTotal = DataStore.getStudentPointsTotal();
 
-        for(Map.Entry<Integer, int[]> entry : studentsPointTotal.entrySet()){
-            int[] arrLine = entry.getValue(); // array containing total student scores
+        for(Map.Entry<Integer, Integer[]> entry : studentsPointTotal.entrySet()){
+            Integer[] arrLine = entry.getValue(); // array containing total student scores
             if(arrLine[myCourseIndex] !=0){
                 int studentId = arrLine[0];
                 int points = arrLine[myCourseIndex];
@@ -111,14 +111,6 @@ public class CourseStatistics {
 
     void setTotalOfAllSubmissions(int totalOfAllSubmissions) {
         this.totalOfAllSubmissions = totalOfAllSubmissions;
-    }
-
-    public Map<Integer,Student> getMapOfStudents() {
-        return mapOfStudents;
-    }
-
-    public void setMapOfStudents(Map<Integer, Student> mapOfStudents) {
-        this.mapOfStudents = mapOfStudents;
     }
 
     private String courseName;

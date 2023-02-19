@@ -5,6 +5,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class Statistics {
 
+    private static List<CourseStatisticsRecord> courseStatisticsRecordList;
     private static Map<String, Integer> mapNumberOfStudentsPerCourse;
     private static Map<String, CourseStatistics> mapCourseStatistics = new HashMap<>(4);
 
@@ -23,7 +24,23 @@ public class Statistics {
 
 
     public Statistics() {
-        //        initMapNumberOfStudentsPerCourse();
+//        System.out.println("Stats Constractor");
+    }
+
+    private static List<CourseStatisticsRecord> loadCourseStatistics() {
+        List<CourseStatisticsRecord> list = new ArrayList<>();
+        int numberOfStudents = 0, numberOfSubmissions =0, totalSubmissionsScore=0;
+        double avgGradePerSubmission = 0;
+
+        for(Course course: Course.values()) {
+            numberOfStudents = Statistics.getNumberOfStudentsPerCourse(course);
+            numberOfSubmissions = Statistics.getNumberOfSubmissionsPerCourse(course);
+            totalSubmissionsScore = Statistics.getTotalSubmissionsScore(course);
+            avgGradePerSubmission = (double) totalSubmissionsScore / numberOfSubmissions;
+
+            list.add(new CourseStatisticsRecord(course, numberOfStudents, numberOfSubmissions, totalSubmissionsScore, avgGradePerSubmission));
+        }
+        return list;
     }
 
     private static void initMapNumberOfStudentsPerCourse() {
@@ -49,14 +66,24 @@ public class Statistics {
 
 
     public static void runStatistics() {
+        courseStatisticsRecordList = loadCourseStatistics();
+        courseStatisticsRecordList.forEach(System.out::println);
         String input;
-        mapCourseStatistics = loadStats();
+//        mapCourseStatistics = loadStats();
 
         while (true) {
             System.out.println("Type the name of a course to see details or 'back' to quit");
-            showMostLeastPopular();
-            showHighestLowestActivity();
-            showEasiestHardest();
+//            System.out.println(showMostLeastPopular(courseStatisticsRecordList));
+//            showHighestLowestActivity();
+//            showEasiestHardest();
+            System.out.println("Most popular: " + mostPopular(courseStatisticsRecordList)); //Java, Databases, Spring
+
+//            System.out.println("Least popular: " + leastPopular()); //DSA
+//            System.out.println("Highest activity: " + highestActivity()); //Java
+//            System.out.println("Lowest activity: " + lowestActivity()); //DSA
+//
+//            System.out.println("Easiest course" + easiestCourse()); //Java
+//            System.out.println("Hardest course" + hardestCourse()); //DSA
 
             System.out.print("> ");
             input = scanner.nextLine();
@@ -65,6 +92,34 @@ public class Statistics {
             }
             if (showCourseDetailsAndExit(input)) break;
         }
+    }
+
+    //TODO: consider changing return type to sorted List<String>
+    static String mostPopular(List<CourseStatisticsRecord> courseStatisticsRecordList) {
+        String result = "";
+        if(courseStatisticsRecordList.size()==0) return "n/a";
+//        courseStatisticsRecordList.sort(Comparator.comparing(c -> c.numOfRegisteredStudents()));
+
+         Comparator<CourseStatisticsRecord> comparator = new Comparator<CourseStatisticsRecord>() {
+            @Override
+            public int compare(CourseStatisticsRecord o1, CourseStatisticsRecord o2) {
+                return o2.numOfRegisteredStudents() - o1.numOfRegisteredStudents();
+            }
+        };
+        Collections.sort(courseStatisticsRecordList, comparator);
+
+        courseStatisticsRecordList.forEach(System.out::println);
+
+        int i=0;
+        do {
+            result+=courseStatisticsRecordList.get(i++).course().name();
+            if(i>0 && courseStatisticsRecordList.get(i).numOfRegisteredStudents() == courseStatisticsRecordList.get(i-1).numOfRegisteredStudents()) {
+                result+=", ";
+            }else break;
+        }while (i<courseStatisticsRecordList.size());
+
+         System.out.println("Most popular course(s): " + result);
+        return result;
     }
 
     private static Map<String, CourseStatistics> loadStats() {
@@ -123,11 +178,48 @@ public class Statistics {
         System.out.println("Hardest course:\t");
     }
 
-    private static void showMostLeastPopular() {
-        mapNumberOfStudentsPerCourse = getNumberOfStudentsPerCourse();
-        System.out.println("Most popular:\t");
-        System.out.println("Least popular\t");
-        printStringIntegerMap(mapNumberOfStudentsPerCourse);
+    static String showMostLeastPopular(List<CourseStatisticsRecord> courseStatisticsRecordList) {
+        String result = "";
+        // sort list by number of registered students
+        courseStatisticsRecordList.sort(Comparator.comparing(a -> a.numOfRegisteredStudents()));
+//        mapNumberOfStudentsPerCourse = getNumberOfStudentsPerCourse();
+        courseStatisticsRecordList.forEach(System.out::println);
+        String mostPopular = "";
+        String leastPopular = "";
+
+        if(courseStatisticsRecordList.size() == 0)
+        {
+            mostPopular = "n/a";
+            leastPopular= "n/a";
+        }
+        else
+        {
+            for(int i=0; i<courseStatisticsRecordList.size(); i++)
+            {
+                mostPopular += courseStatisticsRecordList.get(i).course().name();
+
+                if((i < courseStatisticsRecordList.size()-1) && (courseStatisticsRecordList.get(i).numOfRegisteredStudents()
+                        != courseStatisticsRecordList.get(i+1).numOfRegisteredStudents()))
+                {
+                    break;
+                }
+
+                if((i < courseStatisticsRecordList.size()-1) && (courseStatisticsRecordList.get(i).numOfRegisteredStudents()
+                        == courseStatisticsRecordList.get(i+1).numOfRegisteredStudents()))
+                {
+                    mostPopular += ", ";
+                    continue;
+                }
+            }
+        }
+
+//        System.out.println("Most popular: " + mostPopular);
+//        System.out.println("Least popular: " + leastPopular);
+
+        result =  "Most popular: " + mostPopular + "\nLeast popular: " + leastPopular;
+        return result;
+
+//        printStringIntegerMap(mapNumberOfStudentsPerCourse);
     }
 
     private static void printStringIntegerMap(Map<String, Integer> map) {
@@ -153,6 +245,20 @@ public class Statistics {
         });
 //         Collections.sort();
         return mapNumberOfStudentsPerCourse;
+    }
+
+    public static int getTotalSubmissionsScore(Course course) {
+        int result = 0;
+        int courseIndexInArray = Course.indexOfCourseInArray(course); //
+
+        for (var entry : DataStore.getStudentPointsTotal().entrySet()) {
+            Integer[] values = entry.getValue();
+            int score = values[courseIndexInArray];
+            if (score > 0) result +=score;
+        }
+
+//        System.out.println(course + ", Score: " + result);
+        return result;
     }
 
     Map<String, Integer> getMapSubmissionsPerCourse() {
@@ -191,7 +297,7 @@ public class Statistics {
         int courseIndexInArray = Course.indexOfCourseInArray(course); //
 
             for (var entry : DataStore.getStudentPointsTotal().entrySet()) {
-                int[] values = entry.getValue();
+                Integer[] values = entry.getValue();
                 if (values[courseIndexInArray] > 0) result++;
             }
 

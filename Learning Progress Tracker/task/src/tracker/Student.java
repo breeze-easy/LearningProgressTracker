@@ -5,7 +5,7 @@ public class Student {
     private String firstName;
     private String lastName;
     private String email;
-    private int[] testScores = new int[5]; //keep scores of 4 courses, [indexes]: 0-studentId, 1-Java, 2-DSA, 3-Databases, 4-Spring
+    private Integer[] testScores = new Integer[5]; //keep scores of 4 courses, [indexes]: 0-studentId, 1-Java, 2-DSA, 3-Databases, 4-Spring
 
 
     Student(String firstName, String lastName, String email) {
@@ -22,12 +22,12 @@ public class Student {
         this.studentId = studentId;
     }
 
-    public int[] getTestScores() {
+    public Integer[] getTestScores() {
         return testScores;
     }
 
 
-    public void setTestScores(int[] testScores) {
+    public void setTestScores(Integer[] testScores) {
         this.testScores = testScores;
     }
 

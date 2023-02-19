@@ -1,10 +1,14 @@
 package tracker;
 
+import tracker.statistics.*;
+import tracker.util.DataLoader;
+
+import java.util.List;
 import java.util.Scanner;
 
 public class ActionClass {
     private static int studentCounter = 0;
-//    DataStore dataStore = new DataStore();
+    DataStore dataStore = new DataStore();
     Verifier verifier = new Verifier();
     Student student = null;
     Scanner scanner = new Scanner(System.in);
@@ -46,7 +50,7 @@ public class ActionClass {
                 System.out.println("Enter 'exit' to exit the program.");
                 return; }
 
-            int[] scores = verifier.verifyStudentPointsEntry(input); // input should be in int, int, int, int format
+            Integer[] scores = verifier.verifyStudentPointsEntry(input); // input should be in int, int, int, int format
             if (scores != null) {
                 DataStore.addLineOfStudentPoints(scores); // add to the log
 //                DataStore.updateStudentPointsTotal(scores); // update student points total
@@ -89,6 +93,15 @@ public class ActionClass {
 
      */
     public void showStatistics() {
-        Statistics.runStatistics();
+//        Statistics.runStatistics();
+        //TODO: Remove DataStore initiation with ArrayList
+        //TODO: Remove file path variable
+        /*String file = "E:\\Data\\training\\andrew\\courses\\JetBrainAcademy\\courses\\JavaDeveloper\\LearningProgressTracker\\Learning Progress Tracker\\task\\resources\\data\\TotalStudentScores.csv";
+        List<int[]> tempStudentPointsTransactionLog;
+        List<Integer[]> tempStudentPointsTotal = DataLoader.loadStudentTotalScoreList(file);
+        dataStore = new DataStore(tempStudentPointsTotal);*/
+        Stats stats = new Stats(dataStore);
+        stats.runStats();
+
     }
 }
