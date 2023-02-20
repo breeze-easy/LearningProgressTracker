@@ -2,7 +2,7 @@ package tracker;
 
 import java.util.*;
 
-public class DataStore implements IData{
+public class DataStore /*implements IData*/ {
     private static Map<Integer, Integer[]> studentPointsTotal = new TreeMap<>();
     private static final java.util.Map<Integer,Student> students = new TreeMap<>();
     private static List<Integer[]> studentPointsTransactionLog; // = new ArrayList<>();
@@ -104,8 +104,8 @@ public class DataStore implements IData{
         return studentPointsTotal;
     }
 
-    @Override
-    public List<Integer[]> loadData(String type) {
+//    @Override
+    public static List<Integer[]> loadData(String type) {
         List<Integer[]> list;
         switch (type){
             case "studentPointsTransactionLog" -> list = getStudentPointsTransactionLog();
@@ -115,7 +115,7 @@ public class DataStore implements IData{
         return list;
     }
 
-     List<Integer[]> flattenMapToList(Map<Integer,Integer[]> studentPointsTotal) {
+     static List<Integer[]> flattenMapToList(Map<Integer, Integer[]> studentPointsTotal) {
         List<Integer[]>list = new ArrayList<>();
         studentPointsTotal.forEach((key, value) -> list.add(value));
         return list;

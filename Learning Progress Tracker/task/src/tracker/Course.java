@@ -1,5 +1,10 @@
 package tracker;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Scanner;
+
 public enum Course {
     Java(600), DSA(400), Databases(480), Spring(550);
 
@@ -19,14 +24,19 @@ public enum Course {
     public int getPointsToComplete() {return pointsToComplete;}
 }
 
-class CourseDemo{
+class CourseDemo {
     public static void main(String[] args) {
-        System.out.println(Course.Java);
+//        System.out.println(Course.Java);
+//
+//        System.out.println("All courses and points to complete:");
+//        for (var c : Course.values()) {
+//            System.out.printf("%s, points to complete: %d. Ordinal position: %d%n", c.name(), c.getPointsToComplete(), c.ordinal());
+//        }
 
-        System.out.println("All courses and points to complete:");
-        for(var c: Course.values()) {
-            System.out.printf("%s, points to complete: %d. Ordinal position: %d%n", c.name(), c.getPointsToComplete(), c.ordinal());
-        }
+        String[] arrCourses = Arrays.stream(Course.values()).map(c -> c.name()).toArray(String[]::new);
+        Arrays.stream(arrCourses).forEach(System.out::println);
+
 
     }
 }
+

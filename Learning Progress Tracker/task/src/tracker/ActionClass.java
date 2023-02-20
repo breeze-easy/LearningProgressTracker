@@ -94,13 +94,14 @@ public class ActionClass {
      */
     public void showStatistics() {
 //        Statistics.runStatistics();
-        //TODO: Remove DataStore initiation with ArrayList
+        //TODO: Remove DataStore initiation with ArrayList when finished
         //TODO: Remove file path variable
-        /*String file = "E:\\Data\\training\\andrew\\courses\\JetBrainAcademy\\courses\\JavaDeveloper\\LearningProgressTracker\\Learning Progress Tracker\\task\\resources\\data\\TotalStudentScores.csv";
-        List<int[]> tempStudentPointsTransactionLog;
-        List<Integer[]> tempStudentPointsTotal = DataLoader.loadStudentTotalScoreList(file);
-        dataStore = new DataStore(tempStudentPointsTotal);*/
+        //TODO: use (uncomment) default Stats() constructor when finished
+        String file = "E:\\Data\\training\\andrew\\courses\\JetBrainAcademy\\courses\\JavaDeveloper\\LearningProgressTracker\\Learning Progress Tracker\\task\\resources\\data\\TotalStudentScores.csv";
+        List<Integer[]> tempStudentPointsTransactionLog = DataLoader.loadStudentPointsTotalList(file); //load transLog data from csv file
+        dataStore = new DataStore(tempStudentPointsTransactionLog);
         Stats stats = new Stats(dataStore);
+//        Stats stats = new Stats();
         stats.runStats();
 
     }

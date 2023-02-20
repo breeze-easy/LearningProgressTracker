@@ -3,24 +3,62 @@ package tracker.statistics;
 import org.jetbrains.annotations.NotNull;
 import tracker.*;
 
+import java.text.DecimalFormat;
 import java.util.*;
 
 public class Stats {
     static List<Integer[]> studentPointsTransactionLog;
     static List<Integer[]> studentPointsTotal;
     static List<CourseStatsRecord> courseStatsRecordsList;
+    static Scanner scanner = new Scanner(System.in);
 
-    public Stats(@NotNull IData data) {
+    public Stats(@NotNull DataStore data) {
         studentPointsTransactionLog = data.loadData("studentPointsTransactionLog");
         studentPointsTotal = data.loadData("studentPointsTotal");
     }
 
+    public Stats() {
+        studentPointsTransactionLog = DataStore.loadData("studentPointsTransactionLog");
+        studentPointsTotal = DataStore.loadData("studentPointsTotal");
+    }
+
     public static void runStats(){
         courseStatsRecordsList = loadCourseStatsList();
-        System.out.println("Unordered CourseStatsList");
-        courseStatsRecordsList.forEach(System.out::println);
+//        System.out.println("Unordered CourseStatsList");
+//        courseStatsRecordsList.forEach(System.out::println);
+        while (true) {
+            System.out.println("Type the name of a course to see details or 'back' to quit");
+            
+            printAllStats(courseStatsRecordsList);
 
-        printAllStats(courseStatsRecordsList);
+            String userInput;
+
+            do{
+                System.out.print("> ");
+                userInput = scanner.nextLine().toLowerCase();
+                String[] values = Arrays.stream(Course.values()).map(c -> c.name().toLowerCase()).toArray(String[]::new); // {"java", "dsa", "databases", "spring"};
+                boolean contains = Arrays.asList(values).contains(userInput);
+
+                if (Arrays.asList(values).contains(userInput)) {
+                    printListOfStudentPointsAndCompletion(userInput, courseStatsRecordsList);
+                } else System.out.println("Unknown course.");
+            }while (!userInput.equals("back"));
+
+//            System.out.print("> ");
+//            String input = scanner.nextLine().toLowerCase();
+//            if (input.equals("back")) {
+//                break;
+//            }
+//            String[] values = Arrays.stream(Course.values()).map(c -> c.name().toLowerCase())
+//                    .toArray(String[]::new); // {"java", "dsa", "databases", "spring"};
+//            boolean contains = Arrays.asList(values).contains(input);
+//
+//            if (Arrays.asList(values).contains(input)) {
+//                printListOfStudentPointsAndCompletion(input, courseStatsRecordsList);
+//            } else System.out.println("Unknown course.");
+//            input = scanner.nextLine();
+//            if (showCourseDetailsAndExit(input)) break;
+        }
     }
 
     private static void printAllStats(List<CourseStatsRecord> courseStatsRecordsList) {
@@ -36,7 +74,7 @@ public class Stats {
         String hardest = "Hardest course: ";
         if(courseStatsRecordsList == null ||courseStatsRecordsList.size()==0 ) {
             System.out.println(easiest += "n/a");
-            System.out.println(hardest = "n/a");
+            System.out.println(hardest += "n/a");
             return;
         }
 
@@ -89,7 +127,7 @@ public class Stats {
         String lowestActivity = "Lowest activity: ";
         if(courseStatsRecordsList == null ||courseStatsRecordsList.size()==0 ) {
             System.out.println(highestActivity += "n/a");
-            System.out.println(highestActivity = "n/a");
+            System.out.println(lowestActivity += "n/a");
             return;
         }
 
@@ -138,7 +176,7 @@ public class Stats {
         String leastPopular = "Least Popular: ";
         if(courseStatsRecordsList == null ||courseStatsRecordsList.size()==0 ) {
             System.out.println(mostPopular += "n/a");
-            System.out.println(leastPopular = "n/a");
+            System.out.println(leastPopular += "n/a");
             return;
         }
 
@@ -227,8 +265,72 @@ public class Stats {
                System.out.println(s);
            });
            System.out.println();*/
+           if(numOfStudents == 0) continue; // if no students - don't add this course record to the list
+
            courseStatisticsList.add(new CourseStatsRecord(c, numOfStudents, numOfSubmissions, totalSubmissionsScore, avgGrade, studentList));
        }
         return courseStatisticsList;
+    }
+
+    private static boolean showCourseDetailsAndExit(String input) {
+        boolean result;
+        input = input.toLowerCase();
+
+        while (true) {
+            if (input.equals("back")) {
+//                System.out.print("> ");
+                result = true;
+                break;
+            }
+
+            String[] values = {"java", "dsa", "databases", "spring"};
+            boolean contains = Arrays.asList(values).contains(input);
+
+            if (contains) {
+                //System.out.println("Calling printListOfStudentPointsAndCompletion("+input+")");
+                String courseName = input.substring(0, 1).toUpperCase() + input.substring(1);
+                printListOfStudentPointsAndCompletion(courseName, courseStatsRecordsList);
+            } else System.out.println("Unknown course.");
+            input = scanner.nextLine();
+        }
+        return result;
+    }
+
+    private static void printListOfStudentPointsAndCompletion(String courseName, List<CourseStatsRecord> courseStatsList) {
+        //get list of student points
+        List<Integer[]> studPointsList = courseStatsList.stream()
+                .filter(x -> x.course().name().toLowerCase().equals(courseName))
+                .findFirst().get().listOfStudentScores();
+//        studPointsList.forEach(x-> System.out.println(Arrays.toString(x)));
+        List<Integer[]> modList = new ArrayList<>(studPointsList);
+        //sort the list
+        // Define a custom comparator that sorts based on two elements - 1st desc sort in idx1, then acs sort on idx0
+        Comparator<Integer[]> studentScoreComparator = new Comparator<Integer[]>() {
+            @Override
+            public int compare(Integer[] o1, Integer[] o2) {
+                int compareFirst = Integer.compare(o2[1], o1[1]);
+                if (compareFirst != 0) {
+                    return compareFirst;
+                } else {
+                    return Integer.compare(o1[0], o2[0]);
+                }
+            }
+        };
+        Collections.sort(modList,studentScoreComparator);
+//        System.out.println("Sorted list:");
+
+        String realCourseName = courseName.substring(0, 1).toUpperCase() + courseName.substring(1); //capitalize 1st letter
+        if(realCourseName.equals("Dsa")) realCourseName = realCourseName.toUpperCase();
+        Course course = Course.valueOf(realCourseName);
+        //print header
+        System.out.println(realCourseName);
+        System.out.println("id\t\tpoints\tcompleted");
+
+        DecimalFormat df = new DecimalFormat("0.0");
+        modList.forEach(x-> {
+            double percentOfCompletion = Math.round((double) x[1]/course.getPointsToComplete()*100*100d)/100d;
+            System.out.println(x[0] + "\t" + x[1] + "\t\t" +
+                    df.format(percentOfCompletion) + " %");
+        });
     }
 }
