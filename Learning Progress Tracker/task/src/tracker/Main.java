@@ -9,12 +9,12 @@ public class Main {
         Scanner sc = new Scanner(System.in);
         ActionClass action = new ActionClass();
 
-        final String APP_VERSION = "STAGE 4/5(Unfinished)";
+        final String APP_VERSION = "STAGE 5";
 
         System.out.println("Learning Progress Tracker: " + APP_VERSION);
 
         while (true) {
-            System.out.print("> ");
+//            System.out.print("> ");
             String input = sc.nextLine();
 
             if (selectActionAndExit(action, input)) break;

@@ -3,6 +3,8 @@ package tracker.statistics;
 import org.jetbrains.annotations.NotNull;
 import tracker.*;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.*;
 
@@ -26,38 +28,26 @@ public class Stats {
         courseStatsRecordsList = loadCourseStatsList();
 //        System.out.println("Unordered CourseStatsList");
 //        courseStatsRecordsList.forEach(System.out::println);
-        while (true) {
+        String userInput = "";
+        while (!userInput.equals("back")) {
             System.out.println("Type the name of a course to see details or 'back' to quit");
-            
+
             printAllStats(courseStatsRecordsList);
-
-            String userInput;
-
-            do{
-                System.out.print("> ");
+            while (!userInput.equals("back")){
+//                System.out.print("> ");
                 userInput = scanner.nextLine().toLowerCase();
+                if(userInput.equals("back"))
+                    break;
+
                 String[] values = Arrays.stream(Course.values()).map(c -> c.name().toLowerCase()).toArray(String[]::new); // {"java", "dsa", "databases", "spring"};
                 boolean contains = Arrays.asList(values).contains(userInput);
 
-                if (Arrays.asList(values).contains(userInput)) {
+                if (Arrays.asList(values).contains(userInput))
                     printListOfStudentPointsAndCompletion(userInput, courseStatsRecordsList);
-                } else System.out.println("Unknown course.");
-            }while (!userInput.equals("back"));
+                else
+                    System.out.println("Unknown course.");
 
-//            System.out.print("> ");
-//            String input = scanner.nextLine().toLowerCase();
-//            if (input.equals("back")) {
-//                break;
-//            }
-//            String[] values = Arrays.stream(Course.values()).map(c -> c.name().toLowerCase())
-//                    .toArray(String[]::new); // {"java", "dsa", "databases", "spring"};
-//            boolean contains = Arrays.asList(values).contains(input);
-//
-//            if (Arrays.asList(values).contains(input)) {
-//                printListOfStudentPointsAndCompletion(input, courseStatsRecordsList);
-//            } else System.out.println("Unknown course.");
-//            input = scanner.nextLine();
-//            if (showCourseDetailsAndExit(input)) break;
+            }
         }
     }
 
@@ -65,8 +55,6 @@ public class Stats {
         printMostLeastPopular(courseStatsRecordsList); //most popular has the biggest number of students
         printHighestLowestStudentActivity(courseStatsRecordsList); //higher activity - bigger number of completed tasks
         printEasiestHardestCourse(courseStatsRecordsList); //easiest course has the highest average grade per assignment
-        //TODO: add method to display top learners for each course.
-        //need to get user input to select a course to display top learners
     }
 
     private static void printEasiestHardestCourse(List<CourseStatsRecord> courseStatsRecordsList) {
@@ -79,12 +67,7 @@ public class Stats {
         }
 
         //sort the list based on average submission grade - descending sort
-        Collections.sort(courseStatsRecordsList, new Comparator<CourseStatsRecord>() {
-            @Override
-            public int compare(CourseStatsRecord o1, CourseStatsRecord o2) {
-                return Double.compare(o2.avgSubmissionGrade(), o1.avgSubmissionGrade());
-            }
-        });
+        Collections.sort(courseStatsRecordsList, (o1, o2) -> Double.compare(o2.avgSubmissionGrade(), o1.avgSubmissionGrade()));
 
         //print easiest
         double currAvgSubmitionGrade = -1;
@@ -132,19 +115,16 @@ public class Stats {
         }
 
         //sort the list based on numberOfStudents field - descending sort
-        Collections.sort(courseStatsRecordsList, new Comparator<CourseStatsRecord>() {
-            @Override
-            public int compare(CourseStatsRecord o1, CourseStatsRecord o2) {
-                return o2.numberOfSubmissions()-o1.numberOfSubmissions();
-            }
-        });
+        Collections.sort(courseStatsRecordsList, (o1, o2) -> o2.numberOfSubmissions()-o1.numberOfSubmissions());
 
-        //print most popular
+        //print highest activity
+        int numOfHighestActivity = 0;
         int currentNumOfSubmissions = -1;
 
         for (int i = 0; i <courseStatsRecordsList.size(); i++) {
             currentNumOfSubmissions = courseStatsRecordsList.get(i).numberOfSubmissions();
             highestActivity += courseStatsRecordsList.get(i).course().name();
+            numOfHighestActivity++;
 
             if(courseStatsRecordsList.size()-1 > i){ //if there are more records
                 if(currentNumOfSubmissions==courseStatsRecordsList.get(i+1).numberOfSubmissions()){
@@ -168,7 +148,11 @@ public class Stats {
 
         }
 
-        System.out.println(lowestActivity);
+        if (numOfHighestActivity==courseStatsRecordsList.size()){
+            System.out.println("n/a");
+        }else {
+            System.out.println(lowestActivity);
+        }
     }
 
     private static void printMostLeastPopular(List<CourseStatsRecord> courseStatsRecordsList) {
@@ -181,19 +165,16 @@ public class Stats {
         }
 
         //sort the list based on numberOfStudents field - descending sort
-        Collections.sort(courseStatsRecordsList, new Comparator<CourseStatsRecord>() {
-            @Override
-            public int compare(CourseStatsRecord o1, CourseStatsRecord o2) {
-                return o2.numOfRegisteredStudents()-o1.numOfRegisteredStudents();
-            }
-        });
+        Collections.sort(courseStatsRecordsList, (o1, o2) -> o2.numOfRegisteredStudents()-o1.numOfRegisteredStudents());
 
         //print most popular
         int currentNumOfStudents = -1;
+        int numOfMostPopular = 0; //how many courses from the list have same number of students
 
         for (int i = 0; i <courseStatsRecordsList.size(); i++) {
             currentNumOfStudents = courseStatsRecordsList.get(i).numOfRegisteredStudents();
             mostPopular+= courseStatsRecordsList.get(i).course().name();
+            numOfMostPopular++;
 
             if(courseStatsRecordsList.size()-1 > i){ //if there are more records
                 if(currentNumOfStudents==courseStatsRecordsList.get(i+1).numOfRegisteredStudents()){
@@ -204,6 +185,7 @@ public class Stats {
         System.out.println(mostPopular);
 
         //print least popular
+        int numOfLeastPopular = 0;
         currentNumOfStudents=-1;
         for (int i = courseStatsRecordsList.size()-1; i>=0; i--) {
             currentNumOfStudents = courseStatsRecordsList.get(i).numOfRegisteredStudents();
@@ -217,7 +199,11 @@ public class Stats {
 
         }
 
-        System.out.println(leastPopular);
+        if(numOfMostPopular == courseStatsRecordsList.size()){
+            System.out.println("n/a");
+        }else {
+            System.out.println(leastPopular);
+        }
     }
 
     private static List<CourseStatsRecord> loadCourseStatsList() {
@@ -228,19 +214,18 @@ public class Stats {
         double avgGrade;
         List<Integer[]> studentList = new ArrayList<>();
 
-       for(Course c : Course.values()){
-           int id = 0; //student id
-           int courseIdx = Course.indexOfCourseInArray(c);
+        for(Course c : Course.values()){
+            int id = 0; //student id
+            int courseIdx = Course.indexOfCourseInArray(c);
 
-           numOfStudents = (int) studentPointsTotal.stream().map(x -> x[courseIdx]).filter(x -> x > 0).count();
-           numOfSubmissions = (int) studentPointsTransactionLog.stream().map(x -> x[courseIdx]).filter(x -> x > 0).count();
-           totalSubmissionsScore = studentPointsTotal.stream().map(x -> x[courseIdx]).reduce(0, Integer::sum);
-           avgGrade =  Math.round((double) totalSubmissionsScore / numOfSubmissions * 100d) / 100d;
-           //TODO: add List<Integer> student list to the record
-           studentList =  studentPointsTotal.stream()
-                   .map(x -> (new Integer[] {x[id], x[courseIdx]}))
-                   .filter(x-> x[1] > 0)
-                   .toList();
+            numOfStudents = (int) studentPointsTotal.stream().map(x -> x[courseIdx]).filter(x -> x > 0).count();
+            numOfSubmissions = (int) studentPointsTransactionLog.stream().map(x -> x[courseIdx]).filter(x -> x > 0).count();
+            totalSubmissionsScore = studentPointsTotal.stream().map(x -> x[courseIdx]).reduce(0, Integer::sum);
+            avgGrade =  Math.round((double) totalSubmissionsScore / numOfSubmissions * 100d) / 100d;
+            studentList =  studentPointsTotal.stream()
+                    .map(x -> (new Integer[] {x[id], x[courseIdx]}))
+                    .filter(x-> x[1] > 0)
+                    .toList();
 /*
            //sort student list based on 2 criteria: 1-score(desc), 2-id(asc)
            Comparator<Integer[]> compScores = new Comparator<Integer[]>() {
@@ -265,10 +250,10 @@ public class Stats {
                System.out.println(s);
            });
            System.out.println();*/
-           if(numOfStudents == 0) continue; // if no students - don't add this course record to the list
+            if(numOfStudents == 0) continue; // if no students - don't add this course record to the list
 
-           courseStatisticsList.add(new CourseStatsRecord(c, numOfStudents, numOfSubmissions, totalSubmissionsScore, avgGrade, studentList));
-       }
+            courseStatisticsList.add(new CourseStatsRecord(c, numOfStudents, numOfSubmissions, totalSubmissionsScore, avgGrade, studentList));
+        }
         return courseStatisticsList;
     }
 
@@ -297,6 +282,15 @@ public class Stats {
     }
 
     private static void printListOfStudentPointsAndCompletion(String courseName, List<CourseStatsRecord> courseStatsList) {
+        String realCourseName = courseName.substring(0, 1).toUpperCase() + courseName.substring(1); //capitalize 1st letter
+        //print header
+        System.out.println(realCourseName);
+        System.out.println("id\t\tpoints\tcompleted");
+
+        if(courseStatsList.size()==0){
+//            System.out.println("Error: Course statistics Record List is empty");
+            return;
+        }
         //get list of student points
         List<Integer[]> studPointsList = courseStatsList.stream()
                 .filter(x -> x.course().name().toLowerCase().equals(courseName))
@@ -305,32 +299,27 @@ public class Stats {
         List<Integer[]> modList = new ArrayList<>(studPointsList);
         //sort the list
         // Define a custom comparator that sorts based on two elements - 1st desc sort in idx1, then acs sort on idx0
-        Comparator<Integer[]> studentScoreComparator = new Comparator<Integer[]>() {
-            @Override
-            public int compare(Integer[] o1, Integer[] o2) {
-                int compareFirst = Integer.compare(o2[1], o1[1]);
-                if (compareFirst != 0) {
-                    return compareFirst;
-                } else {
-                    return Integer.compare(o1[0], o2[0]);
-                }
+        Comparator<Integer[]> studentScoreComparator = (o1, o2) -> {
+            int compareFirst = Integer.compare(o2[1], o1[1]);
+            if (compareFirst != 0) {
+                return compareFirst;
+            } else {
+                return Integer.compare(o1[0], o2[0]);
             }
         };
         Collections.sort(modList,studentScoreComparator);
 //        System.out.println("Sorted list:");
 
-        String realCourseName = courseName.substring(0, 1).toUpperCase() + courseName.substring(1); //capitalize 1st letter
         if(realCourseName.equals("Dsa")) realCourseName = realCourseName.toUpperCase();
         Course course = Course.valueOf(realCourseName);
-        //print header
-        System.out.println(realCourseName);
-        System.out.println("id\t\tpoints\tcompleted");
+
 
         DecimalFormat df = new DecimalFormat("0.0");
+
         modList.forEach(x-> {
             double percentOfCompletion = Math.round((double) x[1]/course.getPointsToComplete()*100*100d)/100d;
             System.out.println(x[0] + "\t" + x[1] + "\t\t" +
-                    df.format(percentOfCompletion) + " %");
+                    new BigDecimal(percentOfCompletion).setScale(1, RoundingMode.HALF_UP).doubleValue() + " %");
         });
     }
 }

@@ -12,7 +12,6 @@ public class ActionClass {
     Verifier verifier = new Verifier();
     Student student = null;
     Scanner scanner = new Scanner(System.in);
-    Statistics statistics = new Statistics();
 
     public void addStudents() {
         System.out.println("Enter student credentials or 'back' to return");
@@ -96,12 +95,11 @@ public class ActionClass {
 //        Statistics.runStatistics();
         //TODO: Remove DataStore initiation with ArrayList when finished
         //TODO: Remove file path variable
-        //TODO: use (uncomment) default Stats() constructor when finished
-        String file = "E:\\Data\\training\\andrew\\courses\\JetBrainAcademy\\courses\\JavaDeveloper\\LearningProgressTracker\\Learning Progress Tracker\\task\\resources\\data\\TotalStudentScores.csv";
-        List<Integer[]> tempStudentPointsTransactionLog = DataLoader.loadStudentPointsTotalList(file); //load transLog data from csv file
-        dataStore = new DataStore(tempStudentPointsTransactionLog);
-        Stats stats = new Stats(dataStore);
-//        Stats stats = new Stats();
+//        String file = "E:\\Data\\training\\andrew\\courses\\JetBrainAcademy\\courses\\JavaDeveloper\\LearningProgressTracker\\Learning Progress Tracker\\task\\resources\\data\\TotalStudentScores.csv";
+//        List<Integer[]> tempStudentPointsTransactionLog = DataLoader.loadStudentPointsTotalList(file); //load transLog data from csv file
+//        dataStore = new DataStore(tempStudentPointsTransactionLog);
+//        Stats stats = new Stats(dataStore);
+        Stats stats = new Stats();
         stats.runStats();
 
     }
