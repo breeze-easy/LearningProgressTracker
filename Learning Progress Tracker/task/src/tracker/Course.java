@@ -8,7 +8,7 @@ import java.util.Scanner;
 public enum Course {
     Java(600), DSA(400), Databases(480), Spring(550);
 
-    private int pointsToComplete; // points to complete each course
+    public int pointsToComplete; // points to complete each course
     Course(int i) {pointsToComplete = i;}
 
     // maps course name to corresponding course index in data arrays: transactionLog, etc.

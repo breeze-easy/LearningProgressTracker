@@ -40,6 +40,8 @@ public class Main {
             return true;
         } else if (input.equals("statistics")) {
             action.showStatistics();
+        } else if (input.equals("notify")){
+            action.notifyStudents();
         } else {
             System.out.println("Error: unknown command!");
         }

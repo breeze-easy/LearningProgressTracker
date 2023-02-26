@@ -257,30 +257,6 @@ public class Stats {
         return courseStatisticsList;
     }
 
-    private static boolean showCourseDetailsAndExit(String input) {
-        boolean result;
-        input = input.toLowerCase();
-
-        while (true) {
-            if (input.equals("back")) {
-//                System.out.print("> ");
-                result = true;
-                break;
-            }
-
-            String[] values = {"java", "dsa", "databases", "spring"};
-            boolean contains = Arrays.asList(values).contains(input);
-
-            if (contains) {
-                //System.out.println("Calling printListOfStudentPointsAndCompletion("+input+")");
-                String courseName = input.substring(0, 1).toUpperCase() + input.substring(1);
-                printListOfStudentPointsAndCompletion(courseName, courseStatsRecordsList);
-            } else System.out.println("Unknown course.");
-            input = scanner.nextLine();
-        }
-        return result;
-    }
-
     private static void printListOfStudentPointsAndCompletion(String courseName, List<CourseStatsRecord> courseStatsList) {
         String realCourseName = courseName.substring(0, 1).toUpperCase() + courseName.substring(1); //capitalize 1st letter
         //print header

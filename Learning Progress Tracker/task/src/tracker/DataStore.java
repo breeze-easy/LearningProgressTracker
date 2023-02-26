@@ -1,11 +1,15 @@
 package tracker;
 
+import tracker.messaging.Notification;
+
 import java.util.*;
+
 
 public class DataStore /*implements IData*/ {
     private static Map<Integer, Integer[]> studentPointsTotal = new TreeMap<>();
     private static final java.util.Map<Integer,Student> students = new TreeMap<>();
     private static List<Integer[]> studentPointsTransactionLog; // = new ArrayList<>();
+    private static List<Notification> notificationList = new ArrayList<>();
 
     public DataStore() {
         studentPointsTransactionLog = new ArrayList<>();
@@ -14,23 +18,60 @@ public class DataStore /*implements IData*/ {
     public DataStore(List<Integer[]> studPointsTransactionLog){
         studentPointsTransactionLog = studPointsTransactionLog;
         studentPointsTransactionLog.forEach(DataStore::updateStudentPointsTotal);
-
     }
 
-    //@@@ private static Map<Integer, int[]> studentPointsTotal = new TreeMap<>();
+    public boolean addNotification(Notification notification){
+        if(!notificationExists(notification.getStudentId(),notification.getCourseId())) {
+            notificationList.add(notification);
+            return true;
+        }
+        return false;
+    }
 
-    //@@@    private static void calculateStudentPointsTotal() {
-    //
-    //    }
+    public boolean addNotification(int studentId, int courseId) {
+        boolean result = false;
+        try{
+            if(!notificationExists(studentId,courseId,notificationList)) {
+                notificationList.add(new Notification(studentId, courseId));
+                result = true;
+            }
+        }catch (Exception e) {
+            System.out.println("Error adding new notification");
+            e.printStackTrace();
+        }
+        return result;
+    }
 
-    //@@@    public static Map<Integer, int[]> getStudentPointsTotal() {
-    //        return studentPointsTotal;
-    //    }
+    private boolean notificationExists(int studentId, int courseId, List<Notification> notificationList) {
+        for(Notification notification : notificationList){
+            if(notification.getStudentId()==studentId && notification.getCourseId()==courseId){
+                return true;
+            }
+        }
+        return false;
+    }
 
-//    private static final java.util.Map<Integer,Course> studentCourses = new TreeMap<>();
+    private static boolean notificationExists(int studentId, int courseId) {
+        for(Notification notification : notificationList){
+            if(notification.getStudentId()==studentId && notification.getCourseId()==courseId){
+                return true;
+            }
+        }
+        return false;
+    }
 
     static void addStudent(Student student) {
         students.put(student.getStudentId(), student);
+    }
+
+    public static Student getStudent(Integer id){
+        Student student =null;
+        try{
+            student = students.get(id);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return student;
     }
 
     public static Map<Integer, Student> getStudents() {
@@ -44,7 +85,36 @@ public class DataStore /*implements IData*/ {
     static void addLineOfStudentPoints(Integer[] newPoints) { // // newPoints.length = 5, indexes: 0-student id, 1-4: course points in Java, DSA, Databases, Spring
         studentPointsTransactionLog.add(newPoints);
         updateStudentPointsTotal(newPoints);
+        generateNotificationList((flattenMapToList(studentPointsTotal)), notificationList);
+
         System.out.println("Points updated.");
+    }
+
+    private static void generateNotificationList(List<Integer[]> studentPointsTotal , List<Notification> notificationList) {
+            Course[] courses = Course.values();
+            for (Integer[] line : studentPointsTotal){
+                for (int i = 1; i < line.length; i++) {
+                    int studentId = line[0];
+                    int courseId = i-1; // in studentPointsTotal array course idx 1-4
+                    Course course = courses[courseId]; // in Course[] course idx 0-3. Java:0, DSA:1, Databases:2, Spring:3
+                    if(line[i] >= courses[i-1].getPointsToComplete() && !notificationExists(studentId, courseId)){
+                        notificationList.add(new Notification(studentId,courseId));
+                    }
+                }
+            }
+            System.out.println("Notifications: ");
+        notificationList.forEach(x-> System.out.println(x.toString()));
+    }
+
+    private static boolean notificationExists(Integer[] newPoints, List<Notification> notificationList) {
+        for (Notification notification : notificationList){
+            for (int i = 1; i < newPoints.length; i++) { //i=0: studId; i{1-4}: courseId
+                if(notification.getStudentId()== newPoints[0] && notification.getCourseId()== newPoints[i]){
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     static boolean studentAlreadyExists(String email) {
@@ -115,9 +185,13 @@ public class DataStore /*implements IData*/ {
         return list;
     }
 
-     static List<Integer[]> flattenMapToList(Map<Integer, Integer[]> studentPointsTotal) {
+    static List<Integer[]> flattenMapToList(Map<Integer, Integer[]> studentPointsTotal) {
         List<Integer[]>list = new ArrayList<>();
         studentPointsTotal.forEach((key, value) -> list.add(value));
         return list;
         }
+
+    public static List<Notification> getNotificationList() {
+        return notificationList;
+    }
 }

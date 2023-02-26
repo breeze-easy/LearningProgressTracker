@@ -1,5 +1,7 @@
 package tracker;
 
+import tracker.messaging.Notification;
+import tracker.messaging.Notifier;
 import tracker.statistics.*;
 import tracker.util.DataLoader;
 
@@ -16,7 +18,7 @@ public class ActionClass {
     public void addStudents() {
         System.out.println("Enter student credentials or 'back' to return");
         while (true) {
-            System.out.print("> ");
+//            System.out.print("> ");
             String input = scanner.nextLine();
 
             if (input.equals("back")) {
@@ -103,4 +105,10 @@ public class ActionClass {
         stats.runStats();
 
     }
+
+    public void notifyStudents() {
+        Notifier.sendNotifications();
+    }
+
+
 }
